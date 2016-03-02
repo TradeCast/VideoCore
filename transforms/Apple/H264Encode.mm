@@ -39,10 +39,12 @@
 
 #if VERSION_OK==1
 #include <VideoToolbox/VideoToolbox.h>
+#import <UIKit/UIKit.h>
 #endif
 
 namespace videocore { namespace Apple {
     
+    id resumeNotification;
     static CMTimeValue s_forcedKeyframePTS = 0;
     
 #if VERSION_OK
@@ -104,9 +106,19 @@ namespace videocore { namespace Apple {
     : m_frameW(frame_w), m_frameH(frame_h), m_fps(fps), m_bitrate(bitrate), m_forceKeyframe(false), m_ctsOffset(ctsOffset)
     {
         setupCompressionSession( useBaseline );
+        @autoreleasepool {
+            resumeNotification=[[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+                teardownCompressionSession();
+                m_compressionSession=nullptr;
+                setupCompressionSession(useBaseline);
+            }];
+        }
     }
     H264Encode::~H264Encode()
     {
+        @autoreleasepool {
+            [[NSNotificationCenter defaultCenter]removeObserver:resumeNotification];
+        }
         teardownCompressionSession();
     }
     void
@@ -116,7 +128,7 @@ namespace videocore { namespace Apple {
         if(m_compressionSession) {
             m_encodeMutex.lock();
             VTCompressionSessionRef session = (VTCompressionSessionRef)m_compressionSession;
-
+            
             CMTime pts = CMTimeMake(metadata.timestampDelta + m_ctsOffset, 1000.); // timestamp is in ms.
             CMTime dur = CMTimeMake(1, m_fps);
             VTEncodeInfoFlags flags;
@@ -183,7 +195,7 @@ namespace videocore { namespace Apple {
         @autoreleasepool {
             SInt32 cvPixelFormatTypeValue = ::kCVPixelFormatType_32BGRA;
             SInt8  boolYESValue = 0xFF;
-
+            
             CFDictionaryRef emptyDict = ::CFDictionaryCreate(kCFAllocatorDefault, nil, nil, 0, nil, nil);
             CFNumberRef cvPixelFormatType = ::CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, (const void*)(&(cvPixelFormatTypeValue)));
             CFNumberRef frameW = ::CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, (const void*)(&(m_frameW)));
@@ -192,7 +204,7 @@ namespace videocore { namespace Apple {
             
             const void *pixelBufferOptionsDictKeys[] = { kCVPixelBufferPixelFormatTypeKey, kCVPixelBufferWidthKey,  kCVPixelBufferHeightKey, kCVPixelBufferOpenGLESCompatibilityKey, kCVPixelBufferIOSurfacePropertiesKey};
             const void *pixelBufferOptionsDictValues[] = { cvPixelFormatType,  frameW, frameH, boolYES, emptyDict};
-                CFDictionaryRef pixelBufferOptions = ::CFDictionaryCreate(kCFAllocatorDefault, pixelBufferOptionsDictKeys, pixelBufferOptionsDictValues, 5, nil, nil);
+            CFDictionaryRef pixelBufferOptions = ::CFDictionaryCreate(kCFAllocatorDefault, pixelBufferOptionsDictKeys, pixelBufferOptionsDictValues, 5, nil, nil);
             
             err = VTCompressionSessionCreate(
                                              kCFAllocatorDefault,
@@ -331,15 +343,15 @@ namespace videocore { namespace Apple {
             CFNumberRef duration = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
             
             CFMutableArrayRef limit = CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks);
-
+            
             CFArrayAppendValue(limit, bytes);
             CFArrayAppendValue(limit, duration);
-
+            
             VTSessionSetProperty((VTCompressionSessionRef)m_compressionSession, kVTCompressionPropertyKey_DataRateLimits, limit);
             CFRelease(bytes);
             CFRelease(duration);
             CFRelease(limit);
-
+            
             m_encodeMutex.unlock();
             
         }
