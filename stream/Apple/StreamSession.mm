@@ -220,7 +220,9 @@ namespace videocore {
             [NSIS(m_inputStream) open];
 
             [(id)m_runLoop retain];
-            [NSRL(m_runLoop) run];
+            if (NSRL(m_runLoop) != nil){
+                [NSRL(m_runLoop) run];
+            }
         }
         
     }
