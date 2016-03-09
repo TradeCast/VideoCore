@@ -168,12 +168,15 @@ namespace videocore { namespace iOS {
                     
                     dispatch_release(camQueue);
                     
-                    if([session canAddInput:input]) {
-                        [session addInput:input];
+                    if (input != nil){
+                        if([session canAddInput:input]) {
+                            [session addInput:input];
+                        }
                     }
-                    if([session canAddOutput:output]) {
-                        [session addOutput:output];
-                        
+                    if (output != nil){
+                        if([session canAddOutput:output]) {
+                            [session addOutput:output];
+                        }
                     }
                     
                     reorientCamera();
