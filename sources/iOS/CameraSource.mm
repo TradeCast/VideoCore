@@ -181,7 +181,9 @@ namespace videocore { namespace iOS {
                     
                     reorientCamera();
                     
-                    [session startRunning];
+                    if ([session outputs].count != 0 && [session inputs].count != 0){
+                        [session startRunning];
+                    }
                     
                     if(!bThis->m_orientationLocked) {
                         if(bThis->m_useInterfaceOrientation) {

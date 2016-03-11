@@ -201,7 +201,9 @@ namespace videocore { namespace iOS {
     MicSource::setOutput(std::shared_ptr<IOutput> output) {
         m_output = output;
         auto mixer = std::dynamic_pointer_cast<IAudioMixer>(output);
-        mixer->registerSource(shared_from_this());
+        if (mixer != nullptr){
+            mixer->registerSource(shared_from_this());
+        }
     }
 }
 }
