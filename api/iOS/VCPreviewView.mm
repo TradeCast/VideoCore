@@ -268,8 +268,8 @@
 
 - (void) generateGLESBuffers
 {
-    // Avoid iPad crash when entering background
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [[UIApplication sharedApplication] applicationState] != UIApplicationStateActive){
+    // Avoid crash when entering background
+    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive){
         return;
     }
     EAGLContext* current = [EAGLContext currentContext];
