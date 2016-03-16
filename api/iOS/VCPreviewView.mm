@@ -115,14 +115,18 @@
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if(_texture[0]) {
-        CFRelease(_texture[0]);
-    }
-    if(_texture[1]) {
-        CFRelease(_texture[1]);
-    }
-    if(_currentRef[0]) {
-        CVPixelBufferRelease(_currentRef[0]);
+    // Avoid iPad crash when entering background, overreleasing will cause crash
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [[UIApplication sharedApplication] applicationState] != UIApplicationStateActive){
+    }else{
+        if(_texture[0]){
+            CFRelease(_texture[0]);
+        }
+        if(_texture[1]) {
+            CFRelease(_texture[1]);
+        }
+        if(_currentRef[0]) {
+            CVPixelBufferRelease(_currentRef[0]);
+        }
     }
     if(_currentRef[1]) {
         CVPixelBufferRelease(_currentRef[1]);
@@ -264,6 +268,10 @@
 
 - (void) generateGLESBuffers
 {
+    // Avoid iPad crash when entering background
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [[UIApplication sharedApplication] applicationState] != UIApplicationStateActive){
+        return;
+    }
     EAGLContext* current = [EAGLContext currentContext];
     [EAGLContext setCurrentContext:self.context];
     
