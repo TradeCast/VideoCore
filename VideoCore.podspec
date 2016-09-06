@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name                = "VideoCore"
   s.module_name         = "VideoCore"
-  s.version             = "0.3.1"
+  s.version             = "0.3.2"
   s.summary             = "An audio and video manipulation and streaming pipeline with support for RTMP."
   s.description      = <<-DESC
                           This is a work-in-progress library with the
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.homepage            = "https://github.com/jgh-/VideoCore"
   s.license             = 'MIT'
   s.authors             = { "TradeCast" => "developer@tradecast.com" }
-  s.source              = { :git => "https://github.com/TradeCast/VideoCore.git", :tag => s.version.to_s, }
+  s.source              = { :git => "https://github.com/TradeCast/VideoCore.git", :tag => s.version.to_s }
 
   s.requires_arc        = false
 
