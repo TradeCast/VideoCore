@@ -45,7 +45,7 @@ Pod::Spec.new do |s|
   #s.osx.deployment_target = '10.7'
 
   s.subspec 'Swift' do |swift|
-    swift.public_header_files = 'api/**/*.h'
+    swift.public_header_files = 'videocore/api/**/*.h'
     swift.source_files        = [ 'mixers/**/*.h*', 'mixers/**/*.cpp', 'mixers/**/*.m*',
                             'rtmp/**/*.h*', 'rtmp/**/*.cpp', 'rtmp/**/*.m*',
                             'sources/**/*.h*', 'sources/**/*.cpp', 'sources/**/*.m*',
