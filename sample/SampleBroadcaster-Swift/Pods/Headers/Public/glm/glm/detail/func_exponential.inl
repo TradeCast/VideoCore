@@ -1,1 +1,0 @@
-../../../../../glm/glm/detail/func_exponential.inl
