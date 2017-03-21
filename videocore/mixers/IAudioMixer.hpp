@@ -27,7 +27,7 @@
 
 #include <videocore/system/Buffer.hpp>
 #include <videocore/mixers/IMixer.hpp>
-#include <videocore/transforms/IMetadata.hpp>
+#include <videocore/transforms/IMetaData.hpp>
 
 namespace videocore {
 
