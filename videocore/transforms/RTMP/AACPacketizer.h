@@ -28,7 +28,7 @@
 
 #include <iostream>
 #include <videocore/transforms/ITransform.hpp>
-#include <Vector>
+#include <vector>
 
 namespace videocore { namespace rtmp {
 
